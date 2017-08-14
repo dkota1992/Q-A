@@ -2,64 +2,56 @@ import random
 import time
 start = time.clock()
 input_array = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
-input_array = random.sample(range(1,100),15)
-# input_array = [74, 7, 15, 49, 77, 50, 40, 19, 54, 80]
-#     input_array = [1,2,3,4,5,3,2,2,2,2,3,4]
-#     print(input_arra)
+input_array = random.sample(range(1,100),20)
+
 def main():
 
     N = len(input_array)
-    K = 10
-    if K == 1: return None
+    K = 9
+    if K <= 2: return None
     
     print("Input array: ",input_array)
-
-    referencelist = []
-    new_input = input_array[:K]
-    index = 0
-    new_index = 0
+    print("First Window", input_array[:K])
+     
+    print("First_reference",checkCount(K))      
     
-    if True:
-        while new_index <= K-2:
-            reference_list, new_index = checkCount(new_input, new_index)
-            referencelist += reference_list
-     
-        print("first Window",input_array[:K])
-        print("Referernce List", referencelist) 
-        print("Stack overflow",check_count(input_array[:K]))      
-        
-     
+    new_index = 0   
+    referencelist = checkCount(K)
+    sum_reference_list = sum(referencelist)
     if K<N:
-        new_index = 0
         while new_index + K < N:
-            referencelist = newWindow(K, N, new_index, referencelist)
+            print(sum_reference_list)
+            referencelist, sum_reference_list = newWindow(K, N, new_index, referencelist,sum_reference_list)
             new_index += 1
             print("New Input", input_array[new_index:new_index+K])
             print(referencelist)
-    else: print("ReferenceList K >= N",checkCount(input_array,new_index))        
+#              
+            
+    print(sum_reference_list)      
+
+#      
 
     
     
-
-     
-#     print(referencelist)    
-#     for i in range(0,N-K-1):
-#         print(sum(newWindow(K, N, i+1, referencelist)))
-
-    
-    
-def newWindow(K,N,index, reference_list):
-    if abs(reference_list[0]) == 1: reference_list.pop(0)
+def newWindow(K,N,index, reference_list, sum_reference_list):
+    if abs(reference_list[0]) == 1: 
+        sum_reference_list = sum_reference_list - reference_list.pop(0)       
     else:
         n_value = find_n_value(reference_list[0])
+        sum_reference_list -= reference_list[0]
         n_value = n_value-1
         if reference_list[0]<0 : reference_list[0] = -int((n_value*(n_value+1))/2)
         else: reference_list[0] = int((n_value*(n_value+1))/2)
+        sum_reference_list += reference_list[0]
     new_n_value = find_n_Value(K, N, index, reference_list) 
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
-    elif new_n_value: reference_list[-1] = new_n_value
-    return reference_list
+        sum_reference_list += reference_list[-1]
+    elif new_n_value: 
+        sum_reference_list -= reference_list[-1]
+        reference_list[-1] = new_n_value
+        sum_reference_list += reference_list[-1]
+    return reference_list,sum_reference_list
       
 #     if index+K < N-1: newWindow(K, N, index+1, reference_list)
     
@@ -83,64 +75,38 @@ def find_n_Value(K,N,index, reference_list):
     
     return None
     
-def checkCount(first_window, index,reference_list=None):
-    count = 0
-    reference_list = []
-    while index <= len(first_window)-2:
-        if first_window[index] < first_window[index+1]:
-            index += 1
-            count += 1
-        else: break
-    if count != 0:
-        reference_list.append(int((count*(count+1))/2))
-        
-    count = 0
-    while index <= len(first_window)-2:
-        if first_window[index] > first_window[index+1]:
-            index += 1
-            count += 1
-        else: break
-    if count != 0:
-        reference_list.append(-int((count*(count+1))/2))
-    if index > len(first_window)-2: return reference_list, index
-    elif first_window[index] == first_window[index+1] and index<len(first_window)-2: index += 1
-       
-    return (reference_list, index)
-
-
-def check_count(first_window):
-    reference_list = []
+def checkCount(K):
+    first_window = input_array[:K]
     index = 0
-    while index < len(first_window) - 1:
+    K = len(first_window)
+    reference_list = []
+    while index < K-1:
         count = 0
-        while index <= len(first_window) - 2:
-            if first_window[index] < first_window[index + 1]:
+        while index <= K-2:
+            if first_window[index] < first_window[index+1]:
                 index += 1
                 count += 1
-            else:
-                break
+            else: break
         if count != 0:
-            reference_list.append(int((count * (count + 1)) / 2))
-
+            reference_list.append(int((count*(count+1))/2))
+            
         count = 0
-        while index <= len(first_window) - 2:
-            if first_window[index] > first_window[index + 1]:
+        while index <= K-2:
+            if first_window[index] > first_window[index+1]:
                 index += 1
                 count += 1
-            else:
-                break
+            else: break
         if count != 0:
-            reference_list.append(-int((count * (count + 1)) / 2))
-
-        if index < len(first_window) - 2 and first_window[index] == first_window[index + 1]:
-            index += 1
-
+            reference_list.append(-int((count*(count+1))/2))
+    
+        if index < K-2 and first_window[index] == first_window[index+1] : index += 1
+           
     return reference_list
 
 
 
 if __name__ == "__main__":
 #     print(main())
-    print("n_value",main())
+    main()
     print(time.clock()-start)
 
