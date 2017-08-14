@@ -2,43 +2,32 @@ import random
 import time
 start = time.clock()
 input_array = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
-input_array = random.sample(range(1,100),10)
-#     input_array = [74, 7, 15, 49, 77, 50, 40, 19, 54, 80]
+input_array = random.sample(range(1,1000000),100000)
+# input_array = [74, 7, 15, 49, 77, 50, 40, 19, 54, 80]
 #     input_array = [1,2,3,4,5,3,2,2,2,2,3,4]
 #     print(input_arra)
 def main():
 
     N = len(input_array)
-    K = 8
+    K = 100000
     if K == 1: return None
-    step_size = 3
     
     print("Input array: ",input_array)
     print("First Window",input_array[:K])
-    print("Real Output", checkCount(input_array[:K]))
 #     print(N,K)
     reference_list = []
-    
-    for i in range(0,K,step_size):
-        if K < i+step_size : upper_bound = K
-        else: upper_bound = i+step_size
-        newinput = input_array[i:upper_bound]
-        print(newinput)
-        newlist = checkCount(newinput)
-        reference_list = addList(reference_list, newlist, index=i)
-        print("New List",newlist)
-        print("Reference in for loop",reference_list)
-        
-        
-    print("Reference list {}".format(reference_list))    
-        
+    referencelist = []
     new_input = input_array[:K]
-    
-    index=0
-    print("reference_list", reference_list)
-#     for i in reference_list: print(find_n_value(i))
-    return newWindow(K, N, index, reference_list)
+    new_index = 0
 
+    while new_index <= K-2:
+        reference_list, new_index = checkCount(new_input, new_index)
+        referencelist += reference_list
+         
+    print(referencelist)
+
+    
+    
 def newWindow(K,N,index, reference_list):
     if abs(reference_list[0]) == 1: reference_list.pop(0)
     else:
@@ -52,7 +41,7 @@ def newWindow(K,N,index, reference_list):
     elif new_n_value: reference_list[-1] = new_n_value
 #     print(reference_list)
       
-    if index+K < N-1: newWindow(K, N, index+1, reference_list)
+#     if index+K < N-1: newWindow(K, N, index+1, reference_list)
     
 def find_n_value(num):
     if num >0: num = -num
@@ -74,10 +63,10 @@ def find_n_Value(K,N,index, reference_list):
     
     return None
     
-def checkCount(first_window, index=0,reference_list=None):
-    reference_list = []
+def checkCount(first_window, index,reference_list=None):
     count = 0
-    while index<=len(first_window)-2:
+    reference_list = []
+    while index <= len(first_window)-2:
         if first_window[index] < first_window[index+1]:
             index += 1
             count += 1
@@ -93,53 +82,12 @@ def checkCount(first_window, index=0,reference_list=None):
         else: break
     if count != 0:
         reference_list.append(-int((count*(count+1))/2))
-    
-    if index > len(first_window)-2: return reference_list
+    if index > len(first_window)-2: return reference_list, index
     elif first_window[index] == first_window[index+1] and index<len(first_window)-2: index += 1
-    
-    reference_list = reference_list + checkCount(first_window, index, reference_list)
-    return reference_list
+       
+    return (reference_list, index)
 
-def addList(list1,list2,index):         
-    if list1 == [] or list2 ==[]:
-        return list1 + list2
-    else:
-        list1_n_value = find_n_value(list1[-1])
-        list2_n_value = find_n_value(list2[0])
-        Flag = input_array[index-1] < input_array[index]
-        if list1[-1] >0 and list2[0] > 0:
-            if Flag:
-                n_value = list1_n_value + list2_n_value + 1
-                newvalue = int((n_value*(n_value+1))/2)
-                return list1[:-1] + [newvalue] + list2[1:]
-            return list1 + [-1] + list2
-        elif list1[-1] <0 and list2[0] < 0:
-            if not Flag:
-                n_value = list1_n_value + list2_n_value +1 
-                newvalue = -int((n_value*(n_value+1))/2)
-                return list1[:-1] + [newvalue] + list2[1:]
-            return list1 + [1] + list2
-        elif list1[-1] < 0 and list2[0] > 0:
-            if Flag:
-                n_value = list2_n_value + 1
-                newvalue = int((n_value*(n_value+1))/2)
-                return list1 + [newvalue] + list2[1:]
-            else:
-                n_value = list1_n_value + 1
-                newvalue = int((n_value*(n_value+1))/2)
-                return list1[:-1] + [newvalue] + list2[1:]
-                
-            return list1 + [1] + list2
-        else:
-            if Flag:
-                n_value = list1_n_value + 2
-                newvalue = int((n_value*(n_value+1))/2)
-                return list1[:-1] + [newvalue] + list2[1:]
-            else:
-                n_value = list2_n_value + 1
-                newvalue = int(-(n_value*(n_value+1))/2)
-                return list1[:-1] + [newvalue] + list2[1:]
-                
+
 
 if __name__ == "__main__":
 #     print(main())
