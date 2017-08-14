@@ -2,24 +2,23 @@ import random
 import time
 import sys
 start = time.clock()
-input_array = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
+# input_array = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
 # input_array = random.sample(range(1,100),20)
 
-def main():
+with open(sys.argv[1],"r") as f:
+    N , K = list(map(int,f.readline().strip().split(" ")))
+    input_array = f.readline().strip().split(" ")
+    input_array = list(map(int,input_array))
 
-    with open(sys.argv[1],"r") as f:
-        N , K = list(map(int,f.readline().strip().split(" ")))
-        input_array = f.readline().strip().split(" ")
-        input_array = list(map(int,input_array))
-    print(K)
-    
+print(N,K)
+def main():
     print("Input array: ",input_array)
 #     print("First Window", input_array[:K])
 #      
-    print("First_reference",checkCount(K))      
+    print("First_reference", input_array[:K])      
     if K <= 2: return None
     new_index = 0   
-    referencelist = checkCount(K)
+    referencelist = getFirstWindow()
     print(referencelist)
     sum_reference_list = sum(referencelist)
     if K<N:
@@ -29,17 +28,13 @@ def main():
             new_index += 1
             print("New Input", input_array[new_index:new_index+K])
             print(referencelist)
-#              
-            
-    print(sum_reference_list)      
-
-#      
-
-    
-    
+  
+       
 def newWindow(K,N,index, reference_list, sum_reference_list):
-    if abs(reference_list[0]) == 1: 
-        sum_reference_list = sum_reference_list - reference_list.pop(0)       
+    if not reference_list: reference_list.append(0)
+    if abs(reference_list[0]) == 1:
+        if input_array[index] != input_array[index+1]: 
+            sum_reference_list = sum_reference_list - reference_list.pop(0)       
     else:
         n_value = find_n_value(reference_list[0])
         sum_reference_list -= reference_list[0]
@@ -55,6 +50,8 @@ def newWindow(K,N,index, reference_list, sum_reference_list):
         sum_reference_list -= reference_list[-1]
         reference_list[-1] = new_n_value
         sum_reference_list += reference_list[-1]
+    if not reference_list: return [],0
+    elif reference_list[0] == 0: reference_list.pop(0)
     return reference_list,sum_reference_list
       
 #     if index+K < N-1: newWindow(K, N, index+1, reference_list)
@@ -64,6 +61,7 @@ def find_n_value(num):
     return int((-1+(1-4*2*num)**0.5)/2)
 
 def find_n_Value(K,N,index, reference_list):
+    if reference_list == []: return None
     n_value = find_n_value(reference_list[-1]) 
     if input_array[index+K-1] < input_array[index+K]:
         if reference_list[-1] > 0:
@@ -79,10 +77,9 @@ def find_n_Value(K,N,index, reference_list):
     
     return None
     
-def checkCount(K):
+def getFirstWindow():
     first_window = input_array[:K]
     index = 0
-    K = len(first_window)
     reference_list = []
     while index < K-1:
         count = 0
