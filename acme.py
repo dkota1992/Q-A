@@ -1,26 +1,30 @@
 import random
 import time
+import sys
 start = time.clock()
 input_array = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
-input_array = random.sample(range(1,100),20)
+# input_array = random.sample(range(1,100),20)
 
 def main():
 
-    N = len(input_array)
-    K = 9
-    if K <= 2: return None
+    with open(sys.argv[1],"r") as f:
+        N , K = list(map(int,f.readline().strip().split(" ")))
+        input_array = f.readline().strip().split(" ")
+        input_array = list(map(int,input_array))
+    print(K)
     
     print("Input array: ",input_array)
-    print("First Window", input_array[:K])
-     
+#     print("First Window", input_array[:K])
+#      
     print("First_reference",checkCount(K))      
-    
+    if K <= 2: return None
     new_index = 0   
     referencelist = checkCount(K)
+    print(referencelist)
     sum_reference_list = sum(referencelist)
     if K<N:
         while new_index + K < N:
-            print(sum_reference_list)
+#             print(sum_reference_list)
             referencelist, sum_reference_list = newWindow(K, N, new_index, referencelist,sum_reference_list)
             new_index += 1
             print("New Input", input_array[new_index:new_index+K])
@@ -106,7 +110,6 @@ def checkCount(K):
 
 
 if __name__ == "__main__":
-#     print(main())
     main()
     print(time.clock()-start)
 
