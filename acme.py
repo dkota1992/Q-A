@@ -25,7 +25,8 @@ def main():
         newinput = input_array[i:upper_bound]
         print(newinput)
         newlist = checkCount(newinput)
-        reference_list = addList(reference_list, newlist)
+        reference_list = addList(reference_list, newlist, index=i)
+        print("New List",newlist)
         print("Reference in for loop",reference_list)
         
         
@@ -49,7 +50,7 @@ def newWindow(K,N,index, reference_list):
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
     elif new_n_value: reference_list[-1] = new_n_value
-    print(reference_list)
+#     print(reference_list)
       
     if index+K < N-1: newWindow(K, N, index+1, reference_list)
     
@@ -99,22 +100,49 @@ def checkCount(first_window, index=0,reference_list=None):
     reference_list = reference_list + checkCount(first_window, index, reference_list)
     return reference_list
 
-def addList(list1,list2):         
+def addList(list1,list2,index):         
     if list1 == [] or list2 ==[]:
-        return list1+list2
-    elif (list1[-1] < 0 and list2[0] > 0) or (list1[-1] > 0 and list2[0] < 0):
-        return list1+list2
+        return list1 + list2
     else:
         list1_n_value = find_n_value(list1[-1])
         list2_n_value = find_n_value(list2[0])
-        n_value = list1_n_value + list2_n_value
-        if list1[-1] < 0: 
-            newvalue = -int((n_value*(n_value+1))/2)
+        Flag = input_array[index-1] < input_array[index]
+        if list1[-1] >0 and list2[0] > 0:
+            if Flag:
+                n_value = list1_n_value + list2_n_value + 1
+                newvalue = int((n_value*(n_value+1))/2)
+                return list1[:-1] + [newvalue] + list2[1:]
+            return list1 + [-1] + list2
+        elif list1[-1] <0 and list2[0] < 0:
+            if not Flag:
+                n_value = list1_n_value + list2_n_value +1 
+                newvalue = -int((n_value*(n_value+1))/2)
+                return list1[:-1] + [newvalue] + list2[1:]
+            return list1 + [1] + list2
+        elif list1[-1] < 0 and list2[0] > 0:
+            if Flag:
+                n_value = list2_n_value + 1
+                newvalue = int((n_value*(n_value+1))/2)
+                return list1 + [newvalue] + list2[1:]
+            else:
+                n_value = list1_n_value + 1
+                newvalue = int((n_value*(n_value+1))/2)
+                return list1[:-1] + [newvalue] + list2[1:]
+                
+            return list1 + [1] + list2
         else:
-            newvalue = int((n_value*(n_value+1))/2)
-        return list1[:-1] + [newvalue] + list2[1:]
+            if Flag:
+                n_value = list1_n_value + 2
+                newvalue = int((n_value*(n_value+1))/2)
+                return list1[:-1] + [newvalue] + list2[1:]
+            else:
+                n_value = list2_n_value + 1
+                newvalue = int(-(n_value*(n_value+1))/2)
+                return list1[:-1] + [newvalue] + list2[1:]
+                
 
 if __name__ == "__main__":
 #     print(main())
     print("n_value",main())
     print(time.clock()-start)
+
