@@ -88,7 +88,7 @@ def newWindow(index, reference_list, sum_reference_list):
         else: reference_list[0] = int((n_value*(n_value+1))/2)
         sum_reference_list += reference_list[0]
         
-    new_n_value = find_n_Value(K, N, index, reference_list[:5]+reference_list[-5:]) #We dont have to pass the whole reference list as it is waste of memory
+    new_n_value = find_n_Value(K, N, index, reference_list[:5]+reference_list[-5:]) #Do not pass the whole reference list as it is waste of memory
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
         sum_reference_list += reference_list[-1]
