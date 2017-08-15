@@ -25,7 +25,10 @@ the n value is updated and the last value in the reference list is updated or si
 
 The sum of reference list is calculated in the first and is passed along everytime we transfer to a new window.
 Everytime the reference list gets updated, this sum is also updated using the same principle explained above.
-This helps is reduced load of calculating the list over and over agian.
+This helps is reduced load of calculating the list over and over again.
+
+At any given point if the reference list is an empty list it means all the elements are same in that window. So, when moving to next window,
+just compare the new element of the window with its previous index.
 
 Performance:
 O(n) where n is the number of inputs given.
@@ -40,6 +43,8 @@ import sys #In order to read a file from arguments
 start = time.clock()
 # input_values = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
 # input_values = random.sample(range(1,100),20)
+if len(sys.argv) < 2:
+    raise FileNotFoundError("Please enter in the following format : 'python3 filename.py input.txt'")
  
 with open(sys.argv[1],"r") as f:                        # Opens the file and reads the first line as N,K
     N , K = list(map(int,f.readline().strip().split(" ")))
@@ -68,6 +73,7 @@ def main():
            
 def newWindow(index, reference_list, sum_reference_list):
     if not reference_list: reference_list.append(0)
+    
     if abs(reference_list[0]) == 1:
         if input_values[index] != input_values[index+1]: 
             sum_reference_list = sum_reference_list - reference_list.pop(0)       
@@ -78,6 +84,7 @@ def newWindow(index, reference_list, sum_reference_list):
         if reference_list[0]<0 : reference_list[0] = -int((n_value*(n_value+1))/2)
         else: reference_list[0] = int((n_value*(n_value+1))/2)
         sum_reference_list += reference_list[0]
+        
     new_n_value = find_n_Value(K, N, index, reference_list) 
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
@@ -86,6 +93,7 @@ def newWindow(index, reference_list, sum_reference_list):
         sum_reference_list -= reference_list[-1]
         reference_list[-1] = new_n_value
         sum_reference_list += reference_list[-1]
+        
     if not reference_list: return [],0
     elif reference_list[0] == 0: reference_list.pop(0)
     return reference_list,sum_reference_list
@@ -99,6 +107,7 @@ def find_n_Value(K,N,index, reference_list):
         if input_values[index+K-1] < input_values[index+K]: return 1
         elif input_values[index+K-1] > input_values[index+K]: return -1
         return None
+    
     n_value = find_n_value(reference_list[-1]) 
     if input_values[index+K-1] < input_values[index+K]:
         if input_values[index+K-2] != input_values[index+K-1]:
