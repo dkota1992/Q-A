@@ -44,9 +44,7 @@ start = time.clock()
 with open(sys.argv[1],"r") as f:                        # Opens the file and reads the first line as N,K
     N , K = list(map(int,f.readline().strip().split(" ")))
     input_values = f.readline().strip().split(" ")
-    input_values = tuple(map(int,input_values))
-
-N = len(input_values)               #The input values are stored in a tuple(immutable sets) as we do
+    input_values = tuple(map(int,input_values))              #The input values are stored in a tuple(immutable sets) as we do
                                                         # not change the input data at any given time
 def main():    
     if K <= 1 or K>N: return None
@@ -66,8 +64,6 @@ def main():
             while new_index + K < N:    #Print the sum values of the consecutive windows
                 referencelist, sum_reference_list = newWindow(new_index, referencelist,sum_reference_list)
                 new_index += 1
-                print("Window", input_values[new_index:new_index+K])
-                print("ReferenceList:",referencelist)
                 print(sum_reference_list)
            
 def newWindow(index, reference_list, sum_reference_list):
