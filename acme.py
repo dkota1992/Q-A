@@ -37,15 +37,26 @@ Worst case - O(K) where K is the window size.
 import random #For generating random input values
 import time # For performance testing
 import sys #In order to read a file from arguments
+from globaltest import input_array
 start = time.clock()
 # input_values = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
 # input_values = random.sample(range(1,100),20)
- 
-with open(sys.argv[1],"r") as f:                        # Opens the file and reads the first line as N,K
+
+if len(sys.argv) < 2: 
+    input_path = input()
+else: input_path = sys.argv[1]
+with open(input_path,"r") as f:                        # Opens the file and reads the first line as N,K
     N , K = list(map(int,f.readline().strip().split(" ")))
     input_values = f.readline().strip().split(" ")
     input_values = tuple(map(int,input_values))         #The input values are stored in a tuple(immutable sets) as we do
                                                         # not change the input data at any given time
+                                                        
+input_values = [random.randrange(5,10) for _ in range(400)]
+print(input_values[-10:])
+K = 4
+
+# input_values = [6, 7, 9, 5,11]
+N = len(input_values)
 def main():    
     if K <= 1 or K>N: return None
     elif K == 2:        # If K == 2, life is easy. Just compare the 2 adjacent values and return 1 and -1  for increment and decrement respectively
@@ -57,28 +68,36 @@ def main():
             index += 1
     else:        
         new_index = 0   
-        referencelist = getFirstWindow() #This gets the basic reference list from the first window afer which we will modify the corresponding references
+        referencelist = getFirstWindow(0) #This gets the basic reference list from the first window afer which we will modify the corresponding references
         print(sum(referencelist))
         sum_reference_list = sum(referencelist)
         if K<N:
             while new_index + K < N:    #Print the sum values of the consecutive windows
                 referencelist, sum_reference_list = newWindow(new_index, referencelist,sum_reference_list)
                 new_index += 1
+                print("Current Input", input_values[new_index:K+new_index])
+                print(referencelist)
                 print(sum_reference_list)
+            print("Last Value", input_values[-10:])
            
 def newWindow(index, reference_list, sum_reference_list):
-    if not reference_list: reference_list.append(0)
+    if len(reference_list)<2: 
+        reference_list = getFirstWindow(index)
+        return reference_list, sum(reference_list)
     if abs(reference_list[0]) == 1:
         if input_values[index] != input_values[index+1]: 
-            sum_reference_list = sum_reference_list - reference_list.pop(0)       
-    else:
+            popped = reference_list.pop(0) 
+            sum_reference_list = sum_reference_list -  popped
+            print("Poop",popped)
+                 
+    elif input_values[index] != input_values[index+1]:
         n_value = find_n_value(reference_list[0])
         sum_reference_list -= reference_list[0]
         n_value = n_value-1
         if reference_list[0]<0 : reference_list[0] = -int((n_value*(n_value+1))/2)
         else: reference_list[0] = int((n_value*(n_value+1))/2)
         sum_reference_list += reference_list[0]
-    new_n_value = find_n_Value(K, N, index, reference_list) 
+    new_n_value = find_n_Value(K, N, index, reference_list)
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
         sum_reference_list += reference_list[-1]
@@ -86,8 +105,10 @@ def newWindow(index, reference_list, sum_reference_list):
         sum_reference_list -= reference_list[-1]
         reference_list[-1] = new_n_value
         sum_reference_list += reference_list[-1]
-    if not reference_list: return [],0
-    elif reference_list[0] == 0: reference_list.pop(0)
+    if not reference_list:
+        reference_list = getFirstWindow(index)
+        return reference_list,sum(reference_list)
+
     return reference_list,sum_reference_list
     
 def find_n_value(num):              #Find the root value from the index as every value in reference list is (n*(n-1)/2)
@@ -111,8 +132,8 @@ def find_n_Value(K,N,index, reference_list):
     
     return None     #Return None if it is neither incremental nor decremental
     
-def getFirstWindow():
-    first_window = input_values[:K]
+def getFirstWindow(index):
+    first_window = input_values[index:K+index]
     index = 0
     reference_list = []
     while index < K-1:
