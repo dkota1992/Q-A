@@ -44,7 +44,7 @@ start = time.clock()
 # input_values = list(map(int,"188930 194123 201345 154243 154243".split(" ")))
 # input_values = random.sample(range(1,100),20)
 if len(sys.argv) < 2:
-    raise FileNotFoundError("Please enter in the following format : 'python3 filename.py input.txt'")
+    raise FileNotFoundError("Please enter in the following format : 'python3 filename.py input.txt > output.txt'")
  
 with open(sys.argv[1],"r") as f:                        # Opens the file and reads the first line as N,K
     N , K = list(map(int,f.readline().strip().split(" ")))
@@ -61,7 +61,8 @@ def main():
             else: print(0)
             index += 1
     else:        
-        new_index = 0   
+        new_index = 0  
+#         print("First Window", input_values[:K]) 
         referencelist = getFirstWindow() #This gets the basic reference list from the first window afer which we will modify the corresponding references
         print(sum(referencelist))
         sum_reference_list = sum(referencelist)
@@ -69,6 +70,8 @@ def main():
             while new_index + K < N:    #Print the sum values of the consecutive windows
                 referencelist, sum_reference_list = newWindow(new_index, referencelist,sum_reference_list)
                 new_index += 1
+#                 print("Current Window", input_values[new_index:new_index+K])
+#                 print("Reference List", referencelist)
                 print(sum_reference_list)
            
 def newWindow(index, reference_list, sum_reference_list):
@@ -85,7 +88,7 @@ def newWindow(index, reference_list, sum_reference_list):
         else: reference_list[0] = int((n_value*(n_value+1))/2)
         sum_reference_list += reference_list[0]
         
-    new_n_value = find_n_Value(K, N, index, reference_list) 
+    new_n_value = find_n_Value(K, N, index, reference_list[:5]+reference_list[-5:]) #We dont have to pass the whole reference list as it is waste of memory
     if new_n_value and abs(new_n_value) == 1:
         reference_list.append(new_n_value)
         sum_reference_list += reference_list[-1]
